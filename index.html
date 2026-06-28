@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>炸雞物語 線上點餐</title>
+<title>胖柏吃雞排 線上點餐</title>
 <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: #0f172a; font-family: sans-serif; }
+input, button { font-family: sans-serif; }
 </style>
 </head>
 <body>
@@ -17,24 +18,66 @@ body { background: #0f172a; font-family: sans-serif; }
 <script type="text/babel">
 const { useState } = React;
 
-const MENU = [
-  { id: 1, category: "招牌雞排", items: [
-    { id: 101, name: "原味雞排", price: 65, emoji: "🍗", desc: "酥脆外皮、多汁雞肉", soldOut: false },
-    { id: 102, name: "胡椒雞排", price: 70, emoji: "🍗", desc: "現磨黑胡椒，香氣十足", soldOut: false },
-    { id: 103, name: "辣味雞排", price: 70, emoji: "🌶️", desc: "台式辣醬，夠味不死辣", soldOut: false },
-    { id: 104, name: "起司雞排", price: 80, emoji: "🧀", desc: "濃郁起司拉絲", soldOut: true },
+const INITIAL_MENU = [
+  { id: 1, category: "主餐系列", items: [
+    { id: 101, name: "脆皮雞排", price: 80, emoji: "🍗", desc: "小份80 / 大份請備註", soldOut: false },
+    { id: 102, name: "傳統雞排", price: 75, emoji: "🍗", desc: "小份75 / 大份請備註", soldOut: false },
+    { id: 103, name: "無骨鹽酥雞", price: 60, emoji: "🍗", desc: "小份60 / 大份120", soldOut: false },
+    { id: 104, name: "酥炸三角骨", price: 45, emoji: "🍖", desc: "小份45 / 大份80", soldOut: false },
+    { id: 105, name: "雞軟骨", price: 50, emoji: "🍖", desc: "", soldOut: false },
   ]},
-  { id: 2, category: "雞塊/小食", items: [
-    { id: 201, name: "雞塊 6 塊", price: 55, emoji: "🍘", desc: "外酥內嫩，附醬料", soldOut: false },
-    { id: 202, name: "薯條", price: 35, emoji: "🍟", desc: "現炸黃金薯條", soldOut: false },
+  { id: 2, category: "熱門小點", items: [
+    { id: 201, name: "甘梅地瓜條", price: 30, emoji: "🍠", desc: "小份30 / 大份50", soldOut: false },
+    { id: 202, name: "香酥甜不辣", price: 30, emoji: "🍢", desc: "小份30 / 大份50", soldOut: false },
+    { id: 203, name: "美式脆薯(粗)", price: 30, emoji: "🍟", desc: "小份30 / 大份50", soldOut: false },
+    { id: 204, name: "黃金薯條(粗)", price: 30, emoji: "🍟", desc: "小份30 / 大份50", soldOut: false },
+    { id: 205, name: "香濃起司棒", price: 30, emoji: "🧀", desc: "2支30 / 4支50", soldOut: false },
+    { id: 206, name: "雞蛋豆腐", price: 35, emoji: "🟨", desc: "小份35 / 大份60", soldOut: false },
+    { id: 207, name: "胖胖甜不辣", price: 40, emoji: "🍢", desc: "", soldOut: false },
+    { id: 208, name: "雞皮", price: 40, emoji: "🍗", desc: "", soldOut: false },
+    { id: 209, name: "麥克雞塊", price: 35, emoji: "🍗", desc: "", soldOut: false },
+    { id: 210, name: "洋蔥圈", price: 35, emoji: "🧅", desc: "", soldOut: false },
+    { id: 211, name: "雞屁股", price: 30, emoji: "🍗", desc: "", soldOut: false },
+    { id: 212, name: "雞心", price: 25, emoji: "❤️", desc: "", soldOut: false },
+    { id: 213, name: "蘿蔔糕", price: 25, emoji: "🟫", desc: "", soldOut: false },
+    { id: 214, name: "小熱狗", price: 20, emoji: "🌭", desc: "", soldOut: false },
+    { id: 215, name: "黃金薯餅", price: 20, emoji: "🟡", desc: "", soldOut: false },
+    { id: 216, name: "百頁豆腐", price: 20, emoji: "⬜", desc: "", soldOut: false },
+    { id: 217, name: "米腸", price: 20, emoji: "🌑", desc: "", soldOut: false },
+    { id: 218, name: "米血", price: 20, emoji: "🔴", desc: "", soldOut: false },
+    { id: 219, name: "豆包", price: 20, emoji: "🟤", desc: "", soldOut: false },
+    { id: 220, name: "豆干", price: 20, emoji: "🟫", desc: "", soldOut: false },
   ]},
-  { id: 3, category: "飲料", items: [
-    { id: 301, name: "紅茶", price: 20, emoji: "🧋", desc: "自製紅茶，微甜", soldOut: false },
-    { id: 302, name: "綠茶", price: 20, emoji: "🍵", desc: "清爽綠茶", soldOut: false },
-  ]}
+  { id: 3, category: "海鮮系列", items: [
+    { id: 301, name: "魷米花", price: 60, emoji: "🦑", desc: "", soldOut: false },
+    { id: 302, name: "月亮蝦餅", price: 55, emoji: "🍤", desc: "", soldOut: false },
+    { id: 303, name: "墨魚甜不辣", price: 40, emoji: "🦑", desc: "", soldOut: false },
+    { id: 304, name: "柳葉魚", price: 40, emoji: "🐟", desc: "3隻", soldOut: false },
+    { id: 305, name: "花枝丸", price: 25, emoji: "🟣", desc: "", soldOut: false },
+  ]},
+  { id: 4, category: "青菜系列", items: [
+    { id: 401, name: "脆皮杏鮑菇", price: 35, emoji: "🍄", desc: "", soldOut: false },
+    { id: 402, name: "玉米筍", price: 35, emoji: "🌽", desc: "", soldOut: false },
+    { id: 403, name: "四季豆", price: 35, emoji: "🫛", desc: "", soldOut: false },
+    { id: 404, name: "花椰菜", price: 35, emoji: "🥦", desc: "", soldOut: false },
+    { id: 405, name: "青椒", price: 25, emoji: "🫑", desc: "", soldOut: false },
+    { id: 406, name: "小黃瓜", price: 25, emoji: "🥒", desc: "", soldOut: false },
+  ]},
+  { id: 5, category: "甜甜小點", items: [
+    { id: 501, name: "紅糖Q餅", price: 45, emoji: "🟠", desc: "3顆", soldOut: false },
+    { id: 502, name: "紅豆年糕", price: 40, emoji: "🟥", desc: "", soldOut: false },
+    { id: 503, name: "芝麻湯圓", price: 35, emoji: "⚫", desc: "4顆", soldOut: false },
+    { id: 504, name: "花生湯圓", price: 35, emoji: "🟤", desc: "4顆", soldOut: false },
+    { id: 505, name: "玉米布丁酥", price: 30, emoji: "🟡", desc: "", soldOut: false },
+    { id: 506, name: "QQ地瓜球", price: 30, emoji: "🟠", desc: "", soldOut: false },
+    { id: 507, name: "煉乳銀絲卷", price: 30, emoji: "🤍", desc: "", soldOut: false },
+    { id: 508, name: "蛋黃芋丸", price: 25, emoji: "🟣", desc: "2顆", soldOut: false },
+    { id: 509, name: "芋籤(甜)", price: 20, emoji: "🟪", desc: "", soldOut: false },
+  ]},
 ];
 
-const SPICE = ["不辣","小辣","中辣","大辣"];
+const PEPPER = ["少", "正常", "多"];
+const SPICE = ["不辣", "小辣", "中辣", "大辣"];
 const totalItems = c => Object.values(c).reduce((s,i)=>s+i.qty,0);
 const totalPrice = c => Object.values(c).reduce((s,i)=>s+i.price*i.qty,0);
 
@@ -44,93 +87,129 @@ const s = {
   card:{background:"#1e293b",borderRadius:12,padding:14,marginBottom:10},
   row:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6},
   label:{color:"#64748b",fontSize:13}, val:{color:"#cbd5e1",fontSize:13},
-  tab:{padding:"7px 14px",borderRadius:20,border:"none",cursor:"pointer",fontSize:13,fontWeight:500},
-  addBtn:{background:"#f59e0b",color:"#000",border:"none",borderRadius:8,padding:"6px 14px",fontWeight:700,cursor:"pointer",fontSize:13},
-  qtyBtn:{background:"#334155",color:"#fff",border:"none",borderRadius:6,width:30,height:30,fontSize:16,cursor:"pointer"},
-  spiceBtn:{padding:"6px 12px",borderRadius:8,border:"none",cursor:"pointer",fontSize:13,fontWeight:500},
+  tab:{padding:"7px 14px",borderRadius:20,border:"none",cursor:"pointer",fontSize:12,fontWeight:500},
+  addBtn:{background:"#f59e0b",color:"#000",border:"none",borderRadius:8,padding:"6px 12px",fontWeight:700,cursor:"pointer",fontSize:13},
+  qtyBtn:{background:"#334155",color:"#fff",border:"none",borderRadius:6,width:28,height:28,fontSize:15,cursor:"pointer"},
+  choiceBtn:{padding:"6px 10px",borderRadius:8,border:"none",cursor:"pointer",fontSize:12,fontWeight:500},
   input:{width:"100%",background:"#0f172a",border:"1px solid #334155",borderRadius:8,padding:"10px 12px",color:"#fff",fontSize:14,outline:"none"},
   bottomBar:{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"#0f172a",borderTop:"1px solid #1e293b",padding:"12px 16px"},
   btnGreen:{background:"#06c755",color:"#fff",border:"none",borderRadius:10,padding:"12px 20px",fontWeight:700,cursor:"pointer",fontSize:15},
+  btnRed:{background:"#ef4444",color:"#fff",border:"none",borderRadius:8,padding:"6px 12px",fontWeight:600,cursor:"pointer",fontSize:12},
   btnGhost:{background:"transparent",border:"1px solid #334155",color:"#94a3b8",borderRadius:8,padding:"6px 12px",cursor:"pointer",fontSize:12},
 };
 
 function App() {
   const [view, setView] = useState("customer");
-  return view === "customer"
-    ? <CustomerPage onAdmin={()=>setView("admin")} />
-    : <AdminPage onCustomer={()=>setView("customer")} />;
+  const [menu, setMenu] = useState(INITIAL_MENU);
+  const [orders, setOrders] = useState([]);
+  return view==="customer"
+    ? <CustomerPage menu={menu} orders={orders} setOrders={setOrders} onAdmin={()=>setView("admin")} />
+    : <AdminPage menu={menu} setMenu={setMenu} orders={orders} setOrders={setOrders} onCustomer={()=>setView("customer")} />;
 }
 
-function CustomerPage({onAdmin}) {
+function CustomerPage({menu, orders, setOrders, onAdmin}) {
   const [cart, setCart] = useState({});
+  const [pepper, setPepper] = useState("正常");
   const [spice, setSpice] = useState("不辣");
   const [step, setStep] = useState("menu");
-  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [title, setTitle] = useState("先生");
+  const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
-  const [orders, setOrders] = useState([]);
   const [cat, setCat] = useState(1);
+  const [lastOrder, setLastOrder] = useState(null);
 
   const add = item => { if(item.soldOut)return; setCart(c=>({...c,[item.id]:c[item.id]?{...c[item.id],qty:c[item.id].qty+1}:{...item,qty:1}})); };
-  const remove = id => setCart(c=>{ const n={...c}; n[id].qty>1?n[id]={...n[id],qty:n[id].qty-1}:delete n[id]; return n; });
-  const submit = () => { setOrders(o=>[...o,{id:Date.now(),name,note,spice,items:Object.values(cart),total:totalPrice(cart)}]); setStep("done"); setCart({}); };
+  const remove = id => setCart(c=>{ const n={...c}; if(n[id].qty>1){n[id]={...n[id],qty:n[id].qty-1};}else{delete n[id];} return n; });
+  const submit = () => {
+    const order = {id:Date.now(),lastName,title,phone,pepper,spice,items:Object.values(cart),total:totalPrice(cart),
+      time:new Date().toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"}),status:"待確認",estimatedTime:"",note};
+    setOrders(o=>[...o,order]); setLastOrder(order); setStep("done"); setCart({});
+  };
   const count=totalItems(cart), total=totalPrice(cart);
+  const phoneValid = phone.length===3 && /^\d+$/.test(phone);
+  const canSubmit = lastName && title && phoneValid;
 
-  if(step==="done") { const last=orders[orders.length-1]; return (
+  if(step==="done") return (
     <div style={s.page}>
       <div style={{textAlign:"center",padding:"60px 24px"}}>
         <div style={{fontSize:72,marginBottom:16}}>✅</div>
-        <h2 style={{color:"#fff",marginBottom:8}}>訂單已送出！</h2>
-        <p style={{color:"#94a3b8",marginBottom:24}}>店家確認後會透過 LINE 通知您</p>
+        <h2 style={{color:"#fff",marginBottom:8,fontSize:20}}>訂單已送出！</h2>
+        <p style={{color:"#94a3b8",marginBottom:24,fontSize:14}}>店家確認後會透過 LINE 通知您</p>
         <div style={{...s.card,textAlign:"left",marginBottom:24}}>
-          <div style={s.row}><span style={s.label}>姓名</span><span style={s.val}>{last.name}</span></div>
-          <div style={s.row}><span style={s.label}>辣度</span><span style={s.val}>{last.spice}</span></div>
-          <div style={s.row}><span style={s.label}>金額</span><span style={{color:"#f59e0b",fontWeight:700}}>NT${last.total}</span></div>
+          <div style={s.row}><span style={s.label}>姓名</span><span style={s.val}>{lastOrder?.lastName} {lastOrder?.title}</span></div>
+          <div style={s.row}><span style={s.label}>電話後三碼</span><span style={s.val}>{lastOrder?.phone}</span></div>
+          <div style={s.row}><span style={s.label}>胡椒</span><span style={s.val}>{lastOrder?.pepper}</span></div>
+          <div style={s.row}><span style={s.label}>辣度</span><span style={s.val}>{lastOrder?.spice}</span></div>
+          <div style={s.row}><span style={s.label}>金額</span><span style={{color:"#f59e0b",fontWeight:700}}>NT${lastOrder?.total}</span></div>
+          {lastOrder?.note&&<div style={s.row}><span style={s.label}>備註</span><span style={s.val}>{lastOrder?.note}</span></div>}
         </div>
-        <button style={s.btnGreen} onClick={()=>setStep("menu")}>繼續點餐</button>
+        <button style={s.btnGreen} onClick={()=>{setStep("menu");setLastName("");setTitle("先生");setPhone("");setNote("");}}>繼續點餐</button>
         <br/><br/>
         <button style={{...s.btnGhost,fontSize:12}} onClick={onAdmin}>🔧 店家後台</button>
       </div>
     </div>
-  );}
+  );
 
   if(step==="confirm") return (
     <div style={s.page}>
-      <div style={s.header}><button style={{...s.btnGhost,border:"none",fontSize:20}} onClick={()=>setStep("cart")}>←</button><span style={{color:"#fff",fontWeight:700}}>確認訂單</span></div>
-      <div style={{padding:"16px 16px 120px"}}>
+      <div style={s.header}><button style={{background:"none",border:"none",color:"#94a3b8",fontSize:20,cursor:"pointer"}} onClick={()=>setStep("cart")}>←</button><span style={{color:"#fff",fontWeight:700}}>確認訂單</span></div>
+      <div style={{padding:"16px 16px 140px"}}>
         <div style={s.card}>
           <div style={{color:"#94a3b8",fontSize:13,marginBottom:10}}>您的餐點</div>
           {Object.values(cart).map(i=><div key={i.id} style={s.row}><span style={s.val}>{i.emoji} {i.name} ×{i.qty}</span><span style={{color:"#f59e0b"}}>NT${i.price*i.qty}</span></div>)}
           <div style={{borderTop:"1px solid #334155",marginTop:12,paddingTop:12,display:"flex",justifyContent:"space-between"}}><span style={{color:"#fff",fontWeight:700}}>合計</span><span style={{color:"#f59e0b",fontWeight:700,fontSize:18}}>NT${total}</span></div>
         </div>
         <div style={s.card}>
-          <div style={{color:"#94a3b8",fontSize:13,marginBottom:10}}>辣度</div>
-          <div style={{display:"flex",gap:8}}>{SPICE.map(sp=><button key={sp} onClick={()=>setSpice(sp)} style={{...s.spiceBtn,background:spice===sp?"#f59e0b":"#1e293b",color:spice===sp?"#000":"#94a3b8"}}>{sp}</button>)}</div>
+          <div style={{color:"#94a3b8",fontSize:13,marginBottom:10}}>胡椒量</div>
+          <div style={{display:"flex",gap:8}}>{PEPPER.map(p=><button key={p} onClick={()=>setPepper(p)} style={{...s.choiceBtn,flex:1,background:pepper===p?"#a78bfa":"#0f172a",color:pepper===p?"#fff":"#94a3b8"}}>{p}</button>)}</div>
         </div>
-        <div style={s.card}><div style={{color:"#94a3b8",fontSize:13,marginBottom:8}}>姓名</div><input style={s.input} placeholder="請輸入姓名" value={name} onChange={e=>setName(e.target.value)}/></div>
-        <div style={s.card}><div style={{color:"#94a3b8",fontSize:13,marginBottom:8}}>備註</div><input style={s.input} placeholder="去醬、多辣..." value={note} onChange={e=>setNote(e.target.value)}/></div>
+        <div style={s.card}>
+          <div style={{color:"#94a3b8",fontSize:13,marginBottom:10}}>辣度</div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{SPICE.map(sp=><button key={sp} onClick={()=>setSpice(sp)} style={{...s.choiceBtn,flex:1,background:spice===sp?"#f59e0b":"#0f172a",color:spice===sp?"#000":"#94a3b8"}}>{sp}</button>)}</div>
+        </div>
+        <div style={s.card}>
+          <div style={{color:"#94a3b8",fontSize:13,marginBottom:8}}>姓氏 <span style={{color:"#ef4444"}}>*</span></div>
+          <input style={s.input} placeholder="請輸入姓氏" value={lastName} onChange={e=>setLastName(e.target.value)} maxLength={5}/>
+        </div>
+        <div style={s.card}>
+          <div style={{color:"#94a3b8",fontSize:13,marginBottom:8}}>稱謂 <span style={{color:"#ef4444"}}>*</span></div>
+          <div style={{display:"flex",gap:8}}>{["先生","小姐"].map(t=><button key={t} onClick={()=>setTitle(t)} style={{...s.choiceBtn,flex:1,padding:"10px",background:title===t?"#06c755":"#0f172a",color:title===t?"#fff":"#94a3b8",fontSize:14}}>{t}</button>)}</div>
+        </div>
+        <div style={s.card}>
+          <div style={{color:"#94a3b8",fontSize:13,marginBottom:8}}>電話後三碼 <span style={{color:"#ef4444"}}>*</span></div>
+          <input style={{...s.input,letterSpacing:4,fontSize:18,textAlign:"center"}} placeholder="例：669" value={phone} onChange={e=>setPhone(e.target.value.replace(/\D/g,"").slice(0,3))} maxLength={3} inputMode="numeric"/>
+          {phone.length>0&&phone.length<3&&<div style={{color:"#ef4444",fontSize:12,marginTop:4}}>請輸入3碼數字</div>}
+        </div>
+        <div style={s.card}>
+          <div style={{color:"#94a3b8",fontSize:13,marginBottom:8}}>備註（選填）</div>
+          <input style={s.input} placeholder="例：脆皮雞排要大份、去醬..." value={note} onChange={e=>setNote(e.target.value)}/>
+        </div>
       </div>
-      <div style={s.bottomBar}><button style={{...s.btnGreen,width:"100%",opacity:!name?0.4:1}} disabled={!name} onClick={submit}>確認下單</button></div>
+      <div style={s.bottomBar}>
+        <button style={{...s.btnGreen,width:"100%",opacity:!canSubmit?0.4:1}} disabled={!canSubmit} onClick={submit}>確認下單</button>
+        {!canSubmit&&<div style={{color:"#64748b",fontSize:12,textAlign:"center",marginTop:6}}>請填寫姓氏、稱謂及電話後三碼</div>}
+      </div>
     </div>
   );
 
   if(step==="cart") return (
     <div style={s.page}>
-      <div style={s.header}><button style={{...s.btnGhost,border:"none",fontSize:20}} onClick={()=>setStep("menu")}>←</button><span style={{color:"#fff",fontWeight:700}}>購物車</span></div>
+      <div style={s.header}><button style={{background:"none",border:"none",color:"#94a3b8",fontSize:20,cursor:"pointer"}} onClick={()=>setStep("menu")}>←</button><span style={{color:"#fff",fontWeight:700}}>購物車</span></div>
       <div style={{padding:"16px 16px 120px"}}>
         {Object.values(cart).length===0
-          ? <div style={{textAlign:"center",color:"#64748b",marginTop:60}}>購物車是空的</div>
-          : Object.values(cart).map(i=>(
+          ?<div style={{textAlign:"center",color:"#64748b",marginTop:60}}>購物車是空的</div>
+          :Object.values(cart).map(i=>(
             <div key={i.id} style={{...s.card,display:"flex",alignItems:"center",gap:12}}>
-              <span style={{fontSize:28}}>{i.emoji}</span>
-              <div style={{flex:1}}><div style={{color:"#fff",fontWeight:600}}>{i.name}</div><div style={{color:"#f59e0b",fontSize:13}}>NT${i.price}</div></div>
+              <span style={{fontSize:24}}>{i.emoji}</span>
+              <div style={{flex:1}}><div style={{color:"#fff",fontWeight:600,fontSize:14}}>{i.name}</div><div style={{color:"#f59e0b",fontSize:13}}>NT${i.price}</div></div>
               <div style={{display:"flex",alignItems:"center",gap:8}}>
                 <button style={s.qtyBtn} onClick={()=>remove(i.id)}>−</button>
                 <span style={{color:"#fff",fontWeight:700,minWidth:20,textAlign:"center"}}>{i.qty}</span>
                 <button style={s.qtyBtn} onClick={()=>add(i)}>＋</button>
               </div>
             </div>
-          ))
-        }
+          ))}
       </div>
       <div style={s.bottomBar}>
         <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}><span style={{color:"#94a3b8"}}>共 {count} 項</span><span style={{color:"#f59e0b",fontWeight:700}}>NT${total}</span></div>
@@ -141,96 +220,151 @@ function CustomerPage({onAdmin}) {
 
   return (
     <div style={s.page}>
-      <div style={{background:"linear-gradient(160deg,#92400e,#78350f)",padding:"28px 20px 20px",position:"relative",overflow:"hidden"}}>
-        <div style={{position:"absolute",top:-20,right:-20,fontSize:100,opacity:0.15}}>🍗</div>
-        <div style={{fontSize:13,color:"#fbbf24",letterSpacing:2,marginBottom:4}}>炸雞物語</div>
-        <h1 style={{color:"#fff",fontSize:24,fontWeight:800}}>線上點餐</h1>
-        <p style={{color:"#fcd34d",fontSize:13,marginTop:6}}>現炸現賣 · 每日新鮮</p>
+      <div style={{background:"linear-gradient(160deg,#7c2d12,#92400e)",padding:"24px 20px 16px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-10,right:-10,fontSize:80,opacity:0.12}}>🍗</div>
+        <div style={{fontSize:11,color:"#fbbf24",letterSpacing:3,marginBottom:4}}>PANG BO</div>
+        <h1 style={{color:"#fff",fontSize:22,fontWeight:800}}>胖柏吃雞排</h1>
+        <p style={{color:"#fcd34d",fontSize:12,marginTop:4}}>台中大雅學府路121-3號 · 14:00–00:30</p>
+        <div style={{marginTop:8,fontSize:12,color:"#fdba74"}}>來電訂餐後3碼：<strong style={{color:"#fff"}}>0978-852-669</strong></div>
       </div>
-      <div style={{display:"flex",gap:6,padding:"12px 16px",background:"#0f172a",overflowX:"auto"}}>
-        {MENU.map(m=><button key={m.id} onClick={()=>setCat(m.id)} style={{...s.tab,background:cat===m.id?"#f59e0b":"#1e293b",color:cat===m.id?"#000":"#94a3b8",whiteSpace:"nowrap"}}>{m.category}</button>)}
+      <div style={{display:"flex",gap:4,padding:"10px 12px",background:"#0f172a",overflowX:"auto",borderBottom:"1px solid #1e293b"}}>
+        {menu.map(m=><button key={m.id} onClick={()=>setCat(m.id)} style={{...s.tab,background:cat===m.id?"#f59e0b":"#1e293b",color:cat===m.id?"#000":"#94a3b8",whiteSpace:"nowrap",flexShrink:0}}>{m.category}</button>)}
       </div>
-      <div style={{padding:"8px 16px 120px"}}>
-        {MENU.filter(m=>m.id===cat).map(m=>m.items.map(item=>{
+      <div style={{padding:"8px 12px 120px"}}>
+        {menu.filter(m=>m.id===cat).map(m=>m.items.map(item=>{
           const qty=cart[item.id]?.qty||0;
           return (
-            <div key={item.id} style={{...s.card,display:"flex",alignItems:"center",gap:14,opacity:item.soldOut?0.45:1}}>
-              <div style={{width:52,height:52,background:"#1e3a1e",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>{item.emoji}</div>
-              <div style={{flex:1}}>
-                <div style={{color:"#fff",fontWeight:600,fontSize:15}}>{item.name}</div>
-                <div style={{color:"#64748b",fontSize:12,marginTop:2}}>{item.desc}</div>
-                <div style={{color:"#f59e0b",fontWeight:700,marginTop:4}}>NT${item.price}</div>
+            <div key={item.id} style={{...s.card,display:"flex",alignItems:"center",gap:12,opacity:item.soldOut?0.4:1}}>
+              <div style={{width:44,height:44,background:"#1e3a1e",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{item.emoji}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{color:"#fff",fontWeight:600,fontSize:14}}>{item.name}</div>
+                {item.desc&&<div style={{color:"#64748b",fontSize:11,marginTop:1}}>{item.desc}</div>}
+                <div style={{color:"#f59e0b",fontWeight:700,marginTop:3,fontSize:14}}>NT${item.price}</div>
               </div>
-              {item.soldOut ? <span style={{color:"#ef4444",fontSize:12,background:"#450a0a",padding:"3px 8px",borderRadius:6}}>售完</span>
-                : qty>0 ? <div style={{display:"flex",alignItems:"center",gap:8}}><button style={s.qtyBtn} onClick={()=>remove(item.id)}>−</button><span style={{color:"#fff",fontWeight:700}}>{qty}</span><button style={{...s.qtyBtn,background:"#f59e0b",color:"#000"}} onClick={()=>add(item)}>＋</button></div>
-                : <button style={s.addBtn} onClick={()=>add(item)}>加入</button>}
+              {item.soldOut
+                ?<span style={{color:"#ef4444",fontSize:11,background:"#450a0a",padding:"3px 8px",borderRadius:6,flexShrink:0}}>售完</span>
+                :qty>0
+                  ?<div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+                    <button style={s.qtyBtn} onClick={()=>remove(item.id)}>−</button>
+                    <span style={{color:"#fff",fontWeight:700,minWidth:18,textAlign:"center"}}>{qty}</span>
+                    <button style={{...s.qtyBtn,background:"#f59e0b",color:"#000"}} onClick={()=>add(item)}>＋</button>
+                  </div>
+                  :<button style={s.addBtn} onClick={()=>add(item)}>加入</button>
+              }
             </div>
           );
         }))}
       </div>
-      {count>0 && <div style={s.bottomBar}><button style={{...s.btnGreen,width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center"}} onClick={()=>setStep("cart")}><span style={{background:"rgba(0,0,0,0.25)",borderRadius:20,padding:"2px 10px",fontSize:13}}>{count} 項</span><span>查看購物車</span><span>NT${total}</span></button></div>}
+      {count>0&&<div style={s.bottomBar}><button style={{...s.btnGreen,width:"100%",display:"flex",justifyContent:"space-between",alignItems:"center"}} onClick={()=>setStep("cart")}><span style={{background:"rgba(0,0,0,0.25)",borderRadius:20,padding:"2px 10px",fontSize:13}}>{count} 項</span><span>查看購物車</span><span>NT${total}</span></button></div>}
     </div>
   );
 }
 
-function AdminPage({onCustomer}) {
-  const [orders, setOrders] = useState([
-    {id:1001,name:"小明",spice:"中辣",time:"14:32",status:"待確認",estimatedTime:"",note:"去醬",total:135,items:[{name:"原味雞排",qty:1,price:65},{name:"薯條",qty:1,price:35},{name:"紅茶",qty:1,price:20}]},
-    {id:1002,name:"小美",spice:"不辣",time:"14:38",status:"備料中",estimatedTime:"15 分鐘",note:"",total:70,items:[{name:"胡椒雞排",qty:1,price:70}]},
-    {id:1003,name:"大雄",spice:"大辣",time:"14:45",status:"已完成",estimatedTime:"",note:"",total:85,items:[{name:"辣味雞排",qty:1,price:70},{name:"紅茶",qty:1,price:20}]},
-  ]);
-  const [tab,setTab]=useState("active");
-  const [editId,setEditId]=useState(null);
-  const [tempTime,setTempTime]=useState("");
-  const [toast,setToast]=useState("");
+function AdminPage({menu, setMenu, orders, setOrders, onCustomer}) {
+  const [tab, setTab] = useState("orders");
+  const [editId, setEditId] = useState(null);
+  const [tempTime, setTempTime] = useState("");
+  const [toast, setToast] = useState("");
+  const [editCat, setEditCat] = useState(null);
+  const [newItemName, setNewItemName] = useState("");
+  const [newItemPrice, setNewItemPrice] = useState("");
+  const [newItemDesc, setNewItemDesc] = useState("");
 
   const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(""),2500);};
   const updateStatus=(id,status)=>{setOrders(os=>os.map(o=>o.id===id?{...o,status}:o));if(status==="已完成")showToast("✅ LINE 通知已送出！");if(status==="備料中")showToast("🔔 訂單已確認");};
   const saveTime=id=>{setOrders(os=>os.map(o=>o.id===id?{...o,estimatedTime:tempTime}:o));setEditId(null);showToast("⏱ 時間已更新");};
+  const toggleSoldOut=(catId,itemId)=>{setMenu(m=>m.map(c=>c.id===catId?{...c,items:c.items.map(i=>i.id===itemId?{...i,soldOut:!i.soldOut}:i)}:c));showToast("✅ 品項狀態已更新");};
+  const deleteItem=(catId,itemId)=>{setMenu(m=>m.map(c=>c.id===catId?{...c,items:c.items.filter(i=>i.id!==itemId)}:c));showToast("🗑 品項已刪除");};
+  const addItem=catId=>{
+    if(!newItemName||!newItemPrice)return;
+    setMenu(m=>m.map(c=>c.id===catId?{...c,items:[...c.items,{id:Date.now(),name:newItemName,price:parseInt(newItemPrice),emoji:"🍽️",desc:newItemDesc,soldOut:false}]}:c));
+    setNewItemName("");setNewItemPrice("");setNewItemDesc("");showToast("✅ 品項已新增");
+  };
+
   const sc={"待確認":"#f59e0b","備料中":"#6366f1","已完成":"#10b981"};
   const active=orders.filter(o=>o.status!=="已完成");
   const done=orders.filter(o=>o.status==="已完成");
-  const display=tab==="active"?active:done;
+  const display=tab==="orders"?active:done;
 
   return (
     <div style={s.page}>
       {toast&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:"#10b981",color:"#fff",padding:"10px 20px",borderRadius:24,zIndex:99,fontWeight:600,fontSize:14,whiteSpace:"nowrap"}}>{toast}</div>}
-      <div style={{background:"#0f172a",borderBottom:"1px solid #1e293b",padding:"20px 16px 0"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-          <div><div style={{fontSize:12,color:"#64748b"}}>店家後台</div><h2 style={{color:"#fff",fontSize:18}}>🏪 炸雞物語</h2></div>
+      <div style={{background:"#0f172a",borderBottom:"1px solid #1e293b",padding:"16px 16px 0"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <div><div style={{fontSize:11,color:"#64748b"}}>店家後台</div><h2 style={{color:"#fff",fontSize:17}}>🏪 胖柏吃雞排</h2></div>
           <button style={s.btnGhost} onClick={onCustomer}>👤 點餐頁</button>
         </div>
-        <div style={{display:"flex",gap:8}}>
-          {[["active",`待處理(${active.length})`],["done",`已完成(${done.length})`]].map(([k,l])=>(
-            <button key={k} onClick={()=>setTab(k)} style={{...s.tab,borderBottom:tab===k?"2px solid #f59e0b":"2px solid transparent",borderRadius:"6px 6px 0 0",color:tab===k?"#f59e0b":"#64748b",background:"transparent"}}>{l}</button>
+        <div style={{display:"flex",gap:4}}>
+          {[["orders",`待處理(${active.length})`],["done",`已完成(${done.length})`],["menu","菜單管理"]].map(([k,l])=>(
+            <button key={k} onClick={()=>setTab(k)} style={{...s.tab,borderBottom:tab===k?"2px solid #f59e0b":"2px solid transparent",borderRadius:"6px 6px 0 0",color:tab===k?"#f59e0b":"#64748b",background:"transparent",padding:"8px 10px"}}>{l}</button>
           ))}
         </div>
       </div>
-      <div style={{padding:"12px 16px 32px"}}>
-        {display.length===0&&<div style={{textAlign:"center",color:"#64748b",marginTop:48}}>目前沒有訂單</div>}
-        {display.map(o=>(
-          <div key={o.id} style={{...s.card,borderLeft:`3px solid ${sc[o.status]}`}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-              <div><span style={{color:"#fff",fontWeight:700,fontSize:16}}>{o.name}</span><span style={{color:"#64748b",fontSize:12,marginLeft:8}}>#{o.id} · {o.time}</span></div>
-              <span style={{background:sc[o.status]+"22",color:sc[o.status],padding:"3px 10px",borderRadius:20,fontSize:12,fontWeight:600}}>{o.status}</span>
-            </div>
-            <div style={{background:"#0f172a",borderRadius:8,padding:"10px 12px",marginBottom:10}}>
-              {o.items.map((i,idx)=><div key={idx} style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#cbd5e1",marginBottom:4}}><span>{i.name} ×{i.qty}</span><span>NT${i.price*i.qty}</span></div>)}
-              <div style={{borderTop:"1px solid #1e293b",marginTop:6,paddingTop:6,display:"flex",justifyContent:"space-between"}}><span style={{color:"#94a3b8",fontSize:13}}>辣度：{o.spice}</span><span style={{color:"#f59e0b",fontWeight:700}}>NT${o.total}</span></div>
-              {o.note&&<div style={{color:"#f59e0b",fontSize:12,marginTop:4}}>備註：{o.note}</div>}
-            </div>
-            {o.status!=="已完成"&&(
-              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                <span style={{color:"#64748b",fontSize:13}}>⏱ 等待：</span>
-                {editId===o.id
-                  ? <><input style={{...s.input,flex:1,padding:"5px 10px",fontSize:13}} value={tempTime} onChange={e=>setTempTime(e.target.value)} placeholder="例：15 分鐘"/><button style={{...s.btnGreen,padding:"5px 12px",fontSize:13}} onClick={()=>saveTime(o.id)}>儲存</button></>
-                  : <><span style={{color:o.estimatedTime?"#fff":"#475569",fontSize:13}}>{o.estimatedTime||"未設定"}</span><button style={s.btnGhost} onClick={()=>{setEditId(o.id);setTempTime(o.estimatedTime);}}>修改</button></>}
+      <div style={{padding:"12px 12px 40px"}}>
+        {tab!=="menu"&&(
+          display.length===0
+            ?<div style={{textAlign:"center",color:"#64748b",marginTop:48}}>目前沒有訂單</div>
+            :display.map(o=>(
+              <div key={o.id} style={{...s.card,borderLeft:`3px solid ${sc[o.status]}`}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <div><span style={{color:"#fff",fontWeight:700,fontSize:16}}>{o.lastName}{o.title}</span><span style={{color:"#64748b",fontSize:11,marginLeft:8}}>尾碼{o.phone} · {o.time}</span></div>
+                  <span style={{background:sc[o.status]+"22",color:sc[o.status],padding:"3px 10px",borderRadius:20,fontSize:11,fontWeight:600}}>{o.status}</span>
+                </div>
+                <div style={{background:"#0f172a",borderRadius:8,padding:"10px 12px",marginBottom:10}}>
+                  {o.items.map((i,idx)=><div key={idx} style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#cbd5e1",marginBottom:3}}><span>{i.name} ×{i.qty}</span><span>NT${i.price*i.qty}</span></div>)}
+                  <div style={{borderTop:"1px solid #1e293b",marginTop:6,paddingTop:6,display:"flex",justifyContent:"space-between"}}>
+                    <span style={{color:"#94a3b8",fontSize:12}}>胡椒{o.pepper}・{o.spice}</span>
+                    <span style={{color:"#f59e0b",fontWeight:700}}>NT${o.total}</span>
+                  </div>
+                  {o.note&&<div style={{color:"#fbbf24",fontSize:12,marginTop:4}}>備註：{o.note}</div>}
+                </div>
+                {o.status!=="已完成"&&(
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                    <span style={{color:"#64748b",fontSize:12}}>⏱ 等待：</span>
+                    {editId===o.id
+                      ?<><input style={{...s.input,flex:1,padding:"5px 10px",fontSize:13}} value={tempTime} onChange={e=>setTempTime(e.target.value)} placeholder="例：15 分鐘"/><button style={{...s.btnGreen,padding:"5px 12px",fontSize:13}} onClick={()=>saveTime(o.id)}>儲存</button></>
+                      :<><span style={{color:o.estimatedTime?"#fff":"#475569",fontSize:13}}>{o.estimatedTime||"未設定"}</span><button style={s.btnGhost} onClick={()=>{setEditId(o.id);setTempTime(o.estimatedTime);}}>修改</button></>
+                    }
+                  </div>
+                )}
+                {o.status==="待確認"&&<button style={{...s.btnGreen,width:"100%"}} onClick={()=>updateStatus(o.id,"備料中")}>✓ 確認訂單</button>}
+                {o.status==="備料中"&&<button style={{...s.btnGreen,width:"100%",background:"#10b981",marginTop:6}} onClick={()=>updateStatus(o.id,"已完成")}>🔔 通知顧客取餐</button>}
               </div>
-            )}
-            {o.status==="待確認"&&<button style={{...s.btnGreen,width:"100%"}} onClick={()=>updateStatus(o.id,"備料中")}>✓ 確認訂單</button>}
-            {o.status==="備料中"&&<button style={{...s.btnGreen,width:"100%",background:"#10b981"}} onClick={()=>updateStatus(o.id,"已完成")}>🔔 通知顧客取餐</button>}
+            ))
+        )}
+        {tab==="menu"&&(
+          <div>
+            <div style={{color:"#94a3b8",fontSize:13,marginBottom:12}}>可標為售完或新增/刪除品項</div>
+            {menu.map(cat=>(
+              <div key={cat.id} style={{marginBottom:16}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                  <h3 style={{color:"#f59e0b",fontSize:14}}>{cat.category}</h3>
+                  <button style={{...s.btnGhost,fontSize:11}} onClick={()=>setEditCat(editCat===cat.id?null:cat.id)}>{editCat===cat.id?"收起":"＋ 新增"}</button>
+                </div>
+                {editCat===cat.id&&(
+                  <div style={{...s.card,borderLeft:"2px solid #06c755",marginBottom:8}}>
+                    <div style={{color:"#94a3b8",fontSize:12,marginBottom:8}}>新增品項到「{cat.category}」</div>
+                    <input style={{...s.input,marginBottom:6}} placeholder="品項名稱（必填）" value={newItemName} onChange={e=>setNewItemName(e.target.value)}/>
+                    <input style={{...s.input,marginBottom:6}} placeholder="價格（必填）" value={newItemPrice} onChange={e=>setNewItemPrice(e.target.value.replace(/\D/g,""))} inputMode="numeric"/>
+                    <input style={{...s.input,marginBottom:8}} placeholder="說明（選填）" value={newItemDesc} onChange={e=>setNewItemDesc(e.target.value)}/>
+                    <button style={{...s.btnGreen,width:"100%",opacity:(!newItemName||!newItemPrice)?0.4:1}} disabled={!newItemName||!newItemPrice} onClick={()=>addItem(cat.id)}>新增</button>
+                  </div>
+                )}
+                {cat.items.map(item=>(
+                  <div key={item.id} style={{...s.card,display:"flex",alignItems:"center",gap:8,padding:"10px 12px",opacity:item.soldOut?0.6:1}}>
+                    <span style={{fontSize:18}}>{item.emoji}</span>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{color:item.soldOut?"#64748b":"#fff",fontSize:13,fontWeight:600}}>{item.name}{item.soldOut?" (售完)":""}</div>
+                      <div style={{color:"#f59e0b",fontSize:12}}>NT${item.price}</div>
+                    </div>
+                    <button style={{background:item.soldOut?"#1e3a1e":"#450a0a",color:item.soldOut?"#06c755":"#ef4444",border:`1px solid ${item.soldOut?"#06c755":"#ef4444"}`,borderRadius:6,padding:"4px 8px",cursor:"pointer",fontSize:11,fontWeight:600}} onClick={()=>toggleSoldOut(cat.id,item.id)}>{item.soldOut?"恢復":"售完"}</button>
+                    <button style={{...s.btnRed,padding:"4px 8px",fontSize:11}} onClick={()=>deleteItem(cat.id,item.id)}>刪除</button>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
